@@ -6,7 +6,7 @@
 
     <groupId>io.github.fxboy</groupId>
     <artifactId>fileview-sboot</artifactId>
-    <version>1.0.2</version>
+    <version>3.0.1</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -162,6 +162,4 @@
             </build>
         </profile>
     </profiles>
-
-
 </project>

@@ -5,13 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * @author: Fanxing
- * @time: 2022/4/28 16:23
- * @description: This is a class object !!!
- * At first, only God and I knew what it meant. [2022/4/28 16:23]
- * Now, only God knows what it means. Oh, no, God doesn't know what it means. [Later]
- */
+
 @ConfigurationProperties(prefix = "fileview")
 @Configuration
 public class FileViewConfig {

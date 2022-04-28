@@ -13,13 +13,6 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * @author: Fanxing
- * @time: 2022/4/25 11:06
- * @description: This is a class object !!!
- * At first, only God and I knew what it meant. [2022/4/25 11:06]
- * Now, only God knows what it means. Oh, no, God doesn't know what it means. [Later]
- */
 @Component
 public class ConvertUtils {
     @Resource
@@ -51,13 +44,7 @@ public class ConvertUtils {
     }
 
 
-    /**
-     * @Author Fanxing
-     * @Description 通过OpenOffice进行将word转换为pdf,from:
-     * @Date 2022/3/31 10:03
-     * @param
-     * @return
-     **/
+
     public boolean tst(String sourceFile, String destFile){
         String OpenOffice_HOST = fileViewConfig.getOfficeHost();
         int OpenOffice_PORT = fileViewConfig.getOfficePort();

@@ -1,24 +1,23 @@
 package io.github.fxboy.fileview.sboot.controller;
 
+import io.github.fxboy.fileview.sboot.bean.FileViewRun;
 import io.github.fxboy.fileview.sboot.util.OpenFileUtils;
 import io.github.fxboy.fileview.sboot.util.ViewUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLDecoder;
+import java.util.Locale;
+import java.util.UUID;
 
-/**
- * @author: Fanxing
- * @time: 2022/4/25 11:07
- * @description: This is a class object !!!
- * At first, only God and I knew what it meant. [2022/4/25 11:07]
- * Now, only God knows what it means. Oh, no, God doesn't know what it means. [Later]
- */
+
 @Controller
+@CrossOrigin
 @RequestMapping("/fileview")
 public class FileViewController {
     @Resource
@@ -35,8 +34,8 @@ public class FileViewController {
     public String view(String file) throws UnsupportedEncodingException {
         // urldecode
         // 设置utf8 编码
+        response.setContentType("text/html;charset=utf-8");
         response.setCharacterEncoding("UTF-8");
-
         file = URLDecoder.decode(file, "UTF-8");
         OutputStream os = null;
         // 判断文件是否是pdf或者doc，图片还是其他文件
@@ -47,10 +46,7 @@ public class FileViewController {
         File fp = new File(file);
         try{
             if (!fp.exists()) {
-                os = response.getOutputStream();  //创建输出流
-                os.write("FILEVIEW:file does not exist.".getBytes());
-                os.flush();
-                os.close();
+                viewUtils.writeError("FILEVIEW:file does not exist.",response);
                 return null;
             }
         }catch (Exception e){
@@ -63,8 +59,16 @@ public class FileViewController {
             if (file.endsWith(".pdf")) {
                 export = viewUtils.pdf(file);
                 openFile.openPdf(export, request, response);
-            }else if (file.endsWith(".doc") || file.endsWith(".docx")) {
+            }
+            else if(type.equals(".html") || type.equals(".html")) {
+                openFile.openHtml(file, request, response);
+            }
+            else if (file.endsWith(".doc") || file.endsWith(".docx")) {
                 export = viewUtils.word(file);
+                if(export.startsWith(FileViewRun.IS_WORD_HTML_FLAG)){
+                    openFile.openHtml(export.replace(FileViewRun.IS_WORD_HTML_FLAG,""), request, response);
+                    return null;
+                }
                 openFile.openPdf(export, request, response);
             }else if (file.endsWith(".jpg") || file.endsWith(".jpeg") || file.endsWith(".png") || file.endsWith(".bmp")) {
                 export = viewUtils.img(file);
@@ -78,18 +82,57 @@ public class FileViewController {
                 openFile.dwn(file, request, response);
             }
         }catch (Exception e){
-           try{
-               os = response.getOutputStream();  //创建输出流
-               // 设置utf8 编码
-               os.write(e.getMessage().getBytes());
-               os.flush();
-               os.close();
-           }finally {
-               return null;
-           }
+            viewUtils.writeError(e.getMessage(),response);
+            return null;
         }
         if(dwn){
             return null;
+        }
+        return null;
+    }
+
+    @PostMapping("/stream/{type}")
+    public String viewMit(@PathVariable("type") String type, MultipartFile file)  {
+        if(file == null){
+            viewUtils.writeError("FILEVIEW:file stream not found, please confirm whether to upload",response);
+        }
+        if(type == null || type.trim().equals("")){
+            viewUtils.writeError("FILEVIEW:The type parameter cannot be empty",response);
+        }
+
+        if(!"file".equals(type)){
+            type = "." + type;
+        }else{
+            String name = file.getOriginalFilename();
+            type = name.substring(name.lastIndexOf("."));
+        }
+        type = type.toLowerCase(Locale.ROOT);
+        try{
+            if (type.equals(".pdf")) {
+                openFile.openPdf(file.getInputStream(), request, response);
+            }
+            else if(type.equals(".html") || type.equals(".htm")) {
+                openFile.openHtml(file.getInputStream(), request, response);
+            }
+            else if (type.equals(".doc") || type.equals(".docx")) {
+                String export = viewUtils.saveWord(UUID.randomUUID().toString()+type,file);
+                if(export.startsWith(FileViewRun.IS_WORD_HTML_FLAG)){
+                    openFile.openHtml(export.replace(FileViewRun.IS_WORD_HTML_FLAG,""), request, response);
+                    return null;
+                }
+                openFile.openPdf(export, request, response);
+            }else if (type.equals(".jpg") || type.equals(".jpeg") || type.equals(".png") || type.equals(".bmp")) {
+                openFile.openImg(file.getInputStream(), request, response);
+            }else if(type.equals(".gif")) {
+                openFile.openGif(file.getInputStream(), request, response);
+            }
+            else {
+                openFile.dwn(type,file.getInputStream(), request, response);
+            }
+        } catch (FileNotFoundException e) {
+            viewUtils.writeError("FILEVIEW:" + e.getMessage(),response);
+        } catch (IOException e) {
+            viewUtils.writeError("FILEVIEW:" + e.getMessage(),response);
         }
         return null;
     }

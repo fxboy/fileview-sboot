@@ -10,17 +10,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * @author: Fanxing
- * @time: 2022/4/28 16:08
- * @description: This is a class object !!!
- * At first, only God and I knew what it meant. [2022/4/28 16:08]
- * Now, only God knows what it means. Oh, no, God doesn't know what it means. [Later]
- */
+
 @EnableConfigurationProperties(FileViewConfig.class)
 @ComponentScan(basePackages = "io.github.fxboy.fileview.sboot")
 @Configuration
 public class FileViewRun {
     public static Process process;
     public static Boolean config = false;
+    public final static String IS_WORD_HTML_FLAG = "[msf_html_***_abs_xst_word]";
+
 }

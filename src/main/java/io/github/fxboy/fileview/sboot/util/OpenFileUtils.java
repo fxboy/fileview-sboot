@@ -6,13 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
-/**
- * @author: Fanxing
- * @time: 2022/4/28 16:37
- * @description: This is a class object !!!
- * At first, only God and I knew what it meant. [2022/4/28 16:37]
- * Now, only God knows what it means. Oh, no, God doesn't know what it means. [Later]
- */
+
 @Component
 public class OpenFileUtils {
     public void run(String type, InputStream in, HttpServletRequest request, HttpServletResponse response){
@@ -47,12 +41,15 @@ public class OpenFileUtils {
         }
     }
 
+    public void openHtml(String filePath, HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
+        run("text/html;charset=utf-8", new FileInputStream(filePath), request, response);
+    }
 
     public void openPdf(String filePath, HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
         run("application/pdf", new FileInputStream(filePath), request, response);
     }
 
-    public void openImg(String filePath, HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
+    public void openImg(String filePath,HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
         run("image/jpeg", new FileInputStream(filePath), request, response);
     }
 
@@ -63,6 +60,28 @@ public class OpenFileUtils {
     public void dwn(String filePath, HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
         response.setHeader("Content-Disposition", "attachment;filename=" + new File(filePath).getName());
         run("application/octet-stream", new FileInputStream(filePath), request, response);
+    }
+
+
+
+    public void openPdf(InputStream in, HttpServletRequest request, HttpServletResponse response) {
+        run("application/pdf", in, request, response);
+    }
+
+    public void openImg(InputStream in, HttpServletRequest request, HttpServletResponse response){
+        run("image/jpeg", in, request, response);
+    }
+
+    public void openGif(InputStream in, HttpServletRequest request, HttpServletResponse response){
+        run("image/gif",in, request, response);
+    }
+
+    public void openHtml(InputStream in, HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
+        run("text/html;charset=utf-8",in, request, response);
+    }
+    public void dwn(String type,InputStream in, HttpServletRequest request, HttpServletResponse response)  {
+        response.setHeader("Content-Disposition", "attachment;filename="+ System.currentTimeMillis() + "." + type);
+        run("application/octet-stream", in, request, response);
     }
 
 }
