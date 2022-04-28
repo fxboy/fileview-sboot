@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan(basePackages = "io.github.fxboy.fileview.sboot")
 @Configuration
 public class FileViewRun {
+    @Deprecated
     public static Process process;
     public static Boolean config = false;
     public final static String IS_WORD_HTML_FLAG = "[msf_html_***_abs_xst_word]";

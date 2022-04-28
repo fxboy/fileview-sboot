@@ -48,15 +48,38 @@ public class ViewUtils {
                     throw new IOException("FILEVIEW::File conversion exception");
                 }
             }catch (Exception e){
-                if(e.getMessage().contains("could not save output document")){
+                if(e.getMessage().contains("errorCode: 2074")){
                     // 检测文档是否是html。。。。
                     return FileViewRun.IS_WORD_HTML_FLAG + getHtmlForDoc(file);
                 }
+                throw new IOException("FILEVIEW::File conversion exception");
             }
         }
         return n.getPath();
     }
 
+    public String word(MultipartFile in,String sourceFile) throws IOException {
+
+        String destFile = getFilePath(sourceFile);
+        destFile = destFile.substring(0, destFile.lastIndexOf(".")) + ".pdf";
+
+        try{
+            FileOutputStream fos = new FileOutputStream(destFile);
+            Boolean i = convertUtils.tst((FileInputStream) in.getInputStream(), sourceFile, fos, destFile);
+            if(!i){
+                throw new IOException("FILEVIEW::File conversion exception");
+            }
+        }catch (Exception e){
+            if(e.getMessage().contains("errorCode: 2074")){
+                // 检测文档是否是html。。。。
+                return FileViewRun.IS_WORD_HTML_FLAG + getHtmlForDoc(saveFile(sourceFile,in));
+            }
+            throw new IOException("FILEVIEW::File conversion exception");
+        }
+        return destFile;
+    }
+
+    @Deprecated
     public String word(File file) throws IOException {
         String fileName = file.getPath().substring(0, file.getPath().lastIndexOf(".")) + ".pdf";
         File n = new File(fileName);
@@ -88,7 +111,40 @@ public class ViewUtils {
         }
     }
 
+    public String getFilePath(String file) throws IOException {
+        String fpt = fileViewConfig.getSavePath();
+        if(!FileViewRun.config) throw new IOException("FILEVIEW::Fileview configuration information not found, key: Office");
+        if(fpt.startsWith("/") && !fpt.endsWith("/")){
+            fpt+= "/";
+        }
+        else if(!fpt.startsWith("/") && !fpt.endsWith("//") && fpt.endsWith("/")){
+            fpt+= "/";
+        }
+        else if(!fpt.startsWith("/") && !fpt.endsWith("//")){
+            // 如果不是单斜杠，则说明是windows系统（后期换正则或者匹配操作系统）
+            fpt+= "//";
+        }
+        if(new File(fpt).exists()){
+            new File(fpt).mkdirs();
+        }
+        return fpt + file;
+    }
+    @Deprecated
     public String saveWord(String file, MultipartFile ins) throws IOException {
+       file = getFilePath(file);
+        try{
+            ins.transferTo(new File(file));
+            return word(new File(file));
+        }catch (Exception ex){
+            if(ex.getMessage().contains("could not save output document")){
+                // 检测文档是否是html。。。。
+               return FileViewRun.IS_WORD_HTML_FLAG + getHtmlForDoc(file);
+            }
+            throw new IOException("FILEVIEW::File conversion exception,key save");
+        }
+    }
+
+    public String saveFile(String file, MultipartFile ins) throws IOException {
         String fpt = fileViewConfig.getSavePath();
         if(!FileViewRun.config) throw new IOException("FILEVIEW::Fileview configuration information not found, key: Office");
         if(fpt.startsWith("/") && !fpt.endsWith("/")){
@@ -107,16 +163,17 @@ public class ViewUtils {
             }
             file = fpt + file;
             ins.transferTo(new File(file));
-            return word(new File(file));
+            return file;
         }catch (Exception ex){
             if(ex.getMessage().contains("could not save output document")){
                 // 检测文档是否是html。。。。
-               return FileViewRun.IS_WORD_HTML_FLAG + getHtmlForDoc(file);
+                return FileViewRun.IS_WORD_HTML_FLAG + getHtmlForDoc(file);
             }
             throw new IOException("FILEVIEW::File conversion exception,key save");
         }
     }
 
+    @Deprecated
     public Boolean saveFile(String fileName, InputStream inputStream) {
         OutputStream os = null;
         try{

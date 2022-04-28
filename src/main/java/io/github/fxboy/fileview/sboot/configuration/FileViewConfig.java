@@ -36,6 +36,7 @@ public class FileViewConfig {
         return office.getPath();
     }
 
+    @Deprecated
     public String getOfficeCommand() {
         if(office == null) {
             return null;
@@ -43,7 +44,6 @@ public class FileViewConfig {
         FileViewRun.config = true;
         return office.getCommand();
     }
-
 
     public String getOfficeHost() {
         if(office == null) {
@@ -89,6 +89,7 @@ class Save{
 
 class Office{
     String path;
+    @Deprecated
     String command;
     String host;
     Integer port;
@@ -100,11 +101,11 @@ class Office{
     public void setPath(String path) {
         this.path = path;
     }
-
+    @Deprecated
     public String getCommand() {
         return command;
     }
-
+    @Deprecated
     public void setCommand(String command) {
         this.command = command;
     }

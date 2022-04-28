@@ -115,7 +115,8 @@ public class FileViewController {
                 openFile.openHtml(file.getInputStream(), request, response);
             }
             else if (type.equals(".doc") || type.equals(".docx")) {
-                String export = viewUtils.saveWord(UUID.randomUUID().toString()+type,file);
+                String export = viewUtils.word(file, file.getOriginalFilename());
+                        //viewUtils.saveWord(UUID.randomUUID().toString()+type,file);
                 if(export.startsWith(FileViewRun.IS_WORD_HTML_FLAG)){
                     openFile.openHtml(export.replace(FileViewRun.IS_WORD_HTML_FLAG,""), request, response);
                     return null;

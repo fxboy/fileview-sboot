@@ -1,17 +1,21 @@
 package io.github.fxboy.fileview.sboot.util;
 
-import com.artofsolving.jodconverter.DocumentConverter;
-import com.artofsolving.jodconverter.openoffice.connection.OpenOfficeConnection;
-import com.artofsolving.jodconverter.openoffice.connection.SocketOpenOfficeConnection;
-import com.artofsolving.jodconverter.openoffice.converter.OpenOfficeDocumentConverter;
 import io.github.fxboy.fileview.sboot.bean.FileViewRun;
 import io.github.fxboy.fileview.sboot.configuration.FileViewConfig;
+import org.jodconverter.core.DocumentConverter;
+import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
+import org.jodconverter.core.document.DocumentFormat;
+import org.jodconverter.core.office.OfficeException;
+import org.jodconverter.core.office.OfficeManager;
+import org.jodconverter.local.JodConverter;
+import org.jodconverter.local.office.LocalOfficeManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.Locale;
 
 @Component
 public class ConvertUtils {
@@ -27,47 +31,58 @@ public class ConvertUtils {
         String OpenOffice_HOME = fileViewConfig.getOfficePath();
         String OpenOffice_HOST = fileViewConfig.getOfficeHost();
         int OpenOffice_PORT = fileViewConfig.getOfficePort();
-        String OpenOffice_COMMAND = fileViewConfig.getOfficeCommand();
-        try{
-            if (OpenOffice_HOME.charAt(OpenOffice_HOME.length() - 1) != '\\') {
-                OpenOffice_HOME += "\\";
-            }
-            // 启动OpenOffice的服务
-            String command = OpenOffice_HOME
-                    + OpenOffice_COMMAND;
-            FileViewRun.process = Runtime.getRuntime().exec(command);
-            System.out.println("FILEVIEW::OpenOffice is running...");
-        }catch (Exception ex){
-            ex.printStackTrace();
-            System.out.println("FILEVIEW::OpenOffice is not running...,reason:"+ex.getMessage());
-        }
+       try{
+           LocalOfficeManager manager = LocalOfficeManager.builder().hostName(OpenOffice_HOST).portNumbers(OpenOffice_PORT).officeHome(OpenOffice_HOME).install().build();
+           manager.start();
+           System.out.println("FILEVIEW::OpenOffice is running...");
+       }catch (Exception ex){
+               ex.printStackTrace();
+               System.out.println("FILEVIEW::OpenOffice is not running...,reason:"+ex.getMessage());
+       }
     }
 
 
 
     public boolean tst(String sourceFile, String destFile){
-        String OpenOffice_HOST = fileViewConfig.getOfficeHost();
-        int OpenOffice_PORT = fileViewConfig.getOfficePort();
-        try {
-            File inputFile = new File(sourceFile);
-            if (!inputFile.exists()) {
-                return false;
-            }
-            File outputFile = new File(destFile);
-            if (!outputFile.getParentFile().exists()) {
-                outputFile.getParentFile().mkdirs();
-            }
-            OpenOfficeConnection connection = new SocketOpenOfficeConnection(
-                    OpenOffice_HOST, OpenOffice_PORT);
-            connection.connect();
-            DocumentConverter converter = new OpenOfficeDocumentConverter(
-                    connection);
-            converter.convert(inputFile, outputFile);
-            connection.disconnect();
+        return conver(sourceFile, destFile);
+    }
+
+    public boolean tst(FileInputStream in,String  sourceFile, FileOutputStream out, String destFile){
+        return conver(in,sourceFile,out,destFile);
+    }
+
+    public Boolean conver(String sourceFile, String destFile){
+        File inputFile = new File(sourceFile);
+        File outputFile = new File(destFile);
+
+        try{
+            JodConverter
+                    .convert(inputFile)
+                    .to(outputFile)
+                    .execute();
             return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+        }catch (Exception ex){
+            ex.printStackTrace();
+            throw new RuntimeException(ex);
         }
+
+    }
+
+    public Boolean conver(FileInputStream in,String  sourceFile, FileOutputStream out, String destFile){
+        DocumentFormat inputFormat = DefaultDocumentFormatRegistry.getFormatByExtension(sourceFile.substring(sourceFile.lastIndexOf(".")+1).toLowerCase());
+        DocumentFormat outputFormat = DefaultDocumentFormatRegistry.getFormatByExtension(destFile.substring(destFile.lastIndexOf(".")+1).toLowerCase());
+        try{
+            JodConverter
+                    .convert(in)
+                    .as(inputFormat)
+                    .to(out)
+                    .as(outputFormat)
+                    .execute();
+            return true;
+        }catch (Exception ex){
+            ex.printStackTrace();
+            throw new RuntimeException(ex);
+        }
+
     }
 }
