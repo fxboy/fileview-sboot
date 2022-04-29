@@ -1,6 +1,6 @@
-package io.github.fxboy.fileview.sboot.anno;
+package icu.weboys.fileview.boot.ano;
 
-import io.github.fxboy.fileview.sboot.bean.FileViewRun;
+import icu.weboys.fileview.boot.handler.ApplicationImport;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 
 import java.lang.annotation.ElementType;
@@ -10,7 +10,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-// 使用自动导入配置信息注解，并将我们的入口类放入
-@ImportAutoConfiguration(FileViewRun.class)
-public @interface EnableFileView {
+@ImportAutoConfiguration(ApplicationImport.class)
+public @interface EnableOnlineView {
 }

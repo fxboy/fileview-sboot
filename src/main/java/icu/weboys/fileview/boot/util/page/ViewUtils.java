@@ -1,0 +1,139 @@
+package icu.weboys.fileview.boot.util.page;
+
+
+import icu.weboys.fileview.boot.emu.TpDefinition;
+import icu.weboys.fileview.boot.impl.IView;
+import icu.weboys.fileview.boot.op.ViewFile;
+import icu.weboys.fileview.boot.op.ViewStream;
+import icu.weboys.fileview.boot.util.file.FPUtils;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.lang.reflect.Type;
+
+@Component
+public class ViewUtils {
+    public static String view(File file) throws IOException {
+        IView iView = TpDefinition.APPLICATION_IVIEW.get(FPUtils.getFileType(file));
+        return iView.view(new ViewFile(file));
+    }
+
+    public static String download(File file){
+        IView iView = TpDefinition.APPLICATION_IVIEW.get(FPUtils.getFileType(file));
+        return iView.download(new ViewFile(file));
+    }
+
+    public static FileInputStream open(File file) throws IOException {
+        IView iView = TpDefinition.APPLICATION_IVIEW.get(FPUtils.getFileType(file));
+        return iView.open(new ViewFile(file));
+    }
+
+    public static String view(String file) throws IOException {
+        IView iView = TpDefinition.APPLICATION_IVIEW.get(FPUtils.getFileType(file));
+        return iView.view(new ViewFile(file));
+    }
+
+    public static String download(String file){
+        IView iView = TpDefinition.APPLICATION_IVIEW.get(FPUtils.getFileType(file));
+        return iView.download(new ViewFile(file));
+    }
+
+    public static FileInputStream open(String file) throws IOException {
+        IView iView = TpDefinition.APPLICATION_IVIEW.get(FPUtils.getFileType(file));
+        return iView.open(new ViewFile(file));
+    }
+
+    public static String view(MultipartFile file) throws IOException {
+        IView iView = TpDefinition.APPLICATION_IVIEW.get(FPUtils.getFileType(file));
+        return iView.view(new ViewStream(file));
+    }
+
+    public static String download(MultipartFile file) throws IOException {
+        IView iView = TpDefinition.APPLICATION_IVIEW.get(FPUtils.getFileType(file));
+        return iView.download(new ViewStream(file));
+    }
+
+    public static FileInputStream open(MultipartFile file) throws IOException {
+        IView iView = TpDefinition.APPLICATION_IVIEW.get(FPUtils.getFileType(file));
+        return iView.open(new ViewStream(file));
+    }
+
+    public static String cvHtml(String content){
+        String s = "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>文件预览</title></head><body><div style=\"width:100%;text-align: center;\">" + content +"</div></body></html>\n";
+        return s;
+    }
+
+    public void run(String type, InputStream in,HttpServletResponse response){
+        OutputStream os = null;
+        try {
+            //response.setContentType("text/html;charset=utf-8");
+            response.setCharacterEncoding("UTF-8");
+            //response.setContentType("application/octet-stream");
+            //response.setHeader("Content-Disposition", "attachment; filename="  + FPUtils.getRandomName(ope));
+            type = getFileType(type);
+            response.setContentType(String.format("%s;%s",type,"charset=utf-8"));
+            os = response.getOutputStream();
+            byte[] b = new byte[1024];
+            while (in.read(b) != -1) {
+                os.write(b);
+            }
+            in.close();
+            os.flush();
+            os.close();
+        } catch (Exception e) {
+            try {
+                if (null != in) {
+                    in.close();
+                }
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            try {
+                if (null != os) {
+                    os.close();
+                }
+            } catch (IOException e2) {
+                e2.printStackTrace();
+            }
+        }finally {
+
+        }
+    }
+
+    public void run(String type, byte[] b, HttpServletResponse response){
+        OutputStream os = null;
+        try {
+            response.setCharacterEncoding("UTF-8");
+            type = getFileType(type);
+            response.setContentType(String.format("%s;%s",type,"charset=utf-8"));
+            os = response.getOutputStream();
+            os.write(b);
+            os.flush();
+            os.close();
+        } catch (Exception e) {
+            try {
+                if (null != os) {
+                    os.close();
+                }
+            } catch (IOException e2) {
+                e2.printStackTrace();
+            }
+        }finally {
+
+        }
+    }
+
+
+    public String getFileType(String type){
+        if("doc".equals(type) || "docx".equals(type)){
+            type = "pdf";
+        }
+        if(TpDefinition.APPLICATION_TYPE.containsKey(type)){
+            return TpDefinition.APPLICATION_TYPE.get(type);
+        }else{
+            return TpDefinition.APPLICATION_TYPE.get("txt");
+        }
+    }
+}
