@@ -52,7 +52,7 @@ public class Application {
 ### 支持
 1. 预览word，ppt，excel等不同预览类型的office文件，基于OpenOffice
 2. 转换依赖： jodconverter-local，com-sun-pdfview
-3. MD5文件校验基于 Apache Commons Codec
+3. MD5文件校验功能核心 基于 Apache Commons Codec
 
 ### 声明
 **代码中可能含有Github Copilot生成的代码，如果您认为该代码违反了您的版权，请告知我们，我们将在第一时间删除。**
