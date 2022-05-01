@@ -20,4 +20,8 @@ public interface IFile {
     String getOutFileName();
 
     FileInputStream getInputStream();
+
+    String getMdTypeName(String type);
+
+    String getMdTypePath(String type);
 }

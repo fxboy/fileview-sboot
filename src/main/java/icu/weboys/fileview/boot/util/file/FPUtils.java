@@ -1,6 +1,7 @@
 package icu.weboys.fileview.boot.util.file;
 
 import icu.weboys.fileview.boot.emu.TpDefinition;
+import org.apache.commons.codec.binary.Hex;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -8,10 +9,8 @@ import sun.misc.BASE64Encoder;
 import javax.imageio.ImageIO;
 import javax.sql.rowset.spi.SyncResolver;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.security.MessageDigest;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -77,11 +76,56 @@ public class FPUtils {
         return String.format("%s.%s",UUID.randomUUID(),type);
     }
 
+    //public static File getTempFile(String type){
+    //    return new File(getTempName(type));
+    //}
+
+
     public static File getTempFile(String type){
         return new File(getTempName(type));
     }
 
+
+
+
+
     public static File getTempFile(String name,String type){
         return new File(getTempName(name,type));
+    }
+
+    // 计算md5
+    public static String fileMd5Hash(FileInputStream fileInputStream ){
+        try {
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            byte[] buffer = new byte[8192];
+            int length;
+            while ((length = fileInputStream.read(buffer)) != -1) {
+                md5.update(buffer, 0, length);
+            }
+            return new String(Hex.encodeHex(md5.digest()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                if (fileInputStream != null){
+                    fileInputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    // 计算md5
+    public static String fileMd5Hash(File file) throws FileNotFoundException {
+        FileInputStream fileInputStream = new FileInputStream(file);
+        return fileMd5Hash(fileInputStream);
+    }
+
+    public static String fileMd5Hash(String file) throws FileNotFoundException {
+        FileInputStream fileInputStream = new FileInputStream(new File(file));
+        return fileMd5Hash(fileInputStream);
     }
 }

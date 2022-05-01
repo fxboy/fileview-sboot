@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 
 @Component
 public class ViewUtils {
@@ -61,8 +62,7 @@ public class ViewUtils {
     }
 
     public static String cvHtml(String content){
-        String s = "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>文件预览</title></head><body><div style=\"width:100%;text-align: center;\">" + content +"</div></body></html>\n";
-        return s;
+        return TpDefinition.HTML_THEME_USE.replace("LET[%LET_IMGS%]",content);
     }
 
     public void run(String type, InputStream in,HttpServletResponse response){
@@ -100,6 +100,17 @@ public class ViewUtils {
         }finally {
 
         }
+    }
+
+
+
+    // 处理器
+    public void process(String type,String content,HttpServletResponse response){
+        if(TpDefinition.RETURN_PROCESSOR != null){
+            run(type,new ByteArrayInputStream(TpDefinition.RETURN_PROCESSOR.process(type,content,response).getBytes(StandardCharsets.UTF_8)),response);
+            return;
+        }
+        run(type,new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)),response);
     }
 
     public void run(String type, byte[] b, HttpServletResponse response){

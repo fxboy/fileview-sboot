@@ -1,7 +1,11 @@
 package icu.weboys.fileview.boot.emu;
 
 import icu.weboys.fileview.boot.impl.IView;
+import icu.weboys.fileview.boot.impl.ReturnProcessor;
 
+import javax.swing.text.html.HTML;
+import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -118,9 +122,19 @@ public class TpDefinition {
 
     }};
 
+    public static ReturnProcessor RETURN_PROCESSOR = null;
 
     public static String ROOT_PATH = null;
     {{
         String ROOT_PATH = this.getClass().getResource("/").getPath().substring(1) + "/" + "FILEVIEW_TEMP/";
     }}
+
+
+
+    public static Map<String,String> HTML_THEME = new HashMap<String, String>(16){{
+        put("default","<html><head>    <meta charset=\"utf-8\">    <title>LET[%LET_FILENAME%]</title>    <style>        body{        }        #view{            text-align: center;            padding:80px;        }        .vimg{            margin-bottom: 30px;            padding-bottom: 30px;            border-bottom: 1px solid #EEEEEE        }        #dwn-btn {            position: fixed;            z-index: 100;            width: 25px;            right: 0px;            top: 20%;            color: rgb(255, 255, 255);            background: #fff;            cursor: pointer;            border-bottom-left-radius: 10px;            padding: 10px 6px;            border-top-left-radius: 10px;            font-size: 16px;            letter-spacing: 4px;            box-shadow: 0px 2px 12px 0px rgba(123, 123, 123, 0.26);            color: #484848;            font-size: 12px;            width: 25px;            display: block;            text-align: center;            word-break: break-all;            line-height: 18px;            font-weight: 600;        }</style></head><body><div id=\"view\">LET[%LET_IMGS%]</div><div id=\"dwn-btn\"><span>保存本地</span></div><!-- <div id=\"gd-btn\"><span>关灯</span></div> --></body><script>document.getElementById(\"dwn-btn\").onclick = function(){let pth = 'LET[%LET_FILEPATH%]';}</script></html>");
+    }};
+
+
+    public static String HTML_THEME_USE = "";
 }

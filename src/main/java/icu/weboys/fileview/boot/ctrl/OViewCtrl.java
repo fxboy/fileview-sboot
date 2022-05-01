@@ -1,11 +1,8 @@
 package icu.weboys.fileview.boot.ctrl;
 
 import icu.weboys.fileview.boot.emu.TpDefinition;
-import icu.weboys.fileview.boot.impl.IFile;
-import icu.weboys.fileview.boot.op.ViewFile;
 import icu.weboys.fileview.boot.util.file.FPUtils;
 import icu.weboys.fileview.boot.util.page.ViewUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,44 +21,55 @@ public class OViewCtrl {
     HttpServletResponse response;
     @Resource
     ViewUtils viewUtils;
-    @RequestMapping("/file/{type}")
+    @RequestMapping({"/file/{type}"})
     @ResponseBody
     public String open(@PathVariable("type") String type, @RequestParam("file") String path) {
-        try{
+        String var4 = "";
+        try {
+            this.response.setHeader("fpt", path);
             switch (type) {
                 case "open":
-                    viewUtils.run(FPUtils.getFileType(path),ViewUtils.open(path),response);
+                    this.viewUtils.run(FPUtils.getFileType(path), ViewUtils.open(path), this.response);
+                    break;
                 case "view":
-                    viewUtils.run(TpDefinition.ENABLE_IMAGE_VIEW_TYPE.containsKey(FPUtils.getFileType(path))?"html":FPUtils.getFileType(path),ViewUtils.view(path).getBytes(StandardCharsets.UTF_8),response);
+                    this.viewUtils.process(TpDefinition.ENABLE_IMAGE_VIEW_TYPE.containsKey(FPUtils.getFileType(path)) ? "html" : FPUtils.getFileType(path), ViewUtils.view(path), this.response);
+                    break;
                 case "down":
-                    return ViewUtils.download(path);
+                    ViewUtils.download(path);
+                    break;
                 default:
-                    return "The current type is not supported!";
+                    var4 = "The current type is not supported!";
+                    break;
             }
-        }catch (Exception e){
-            return String.format("Something went wrong,%s",e.getMessage());
+        } catch (Exception var9) {
+            var4 = String.format("Something went wrong,%s", var9.getMessage());
         }finally {
-            return "";
+            return var4;
         }
     }
 
-    @PostMapping("/stream/{type}")
+    @PostMapping({"/stream/{type}"})
     public String view(@PathVariable("type") String type, @RequestParam("file") MultipartFile file) {
-        try{
+        String var4 = "";
+        try {
+            this.response.setHeader("fpt", file.getOriginalFilename());
             switch (type) {
                 case "open":
-                    viewUtils.run(FPUtils.getFileType(file),ViewUtils.open(file),response);
+                    this.viewUtils.run(FPUtils.getFileType(file), ViewUtils.open(file), this.response);
                 case "view":
-                    viewUtils.run(TpDefinition.ENABLE_IMAGE_VIEW_TYPE.containsKey(FPUtils.getFileType(file))?"html":FPUtils.getFileType(file),ViewUtils.view(file).getBytes(StandardCharsets.UTF_8),response);
+                    this.viewUtils.process(TpDefinition.ENABLE_IMAGE_VIEW_TYPE.containsKey(FPUtils.getFileType(file)) ? "html" : FPUtils.getFileType(file), ViewUtils.view(file), this.response);
                 case "down":
-                    return ViewUtils.download(file);
+                    ViewUtils.download(file);
+                    break;
                 default:
-                    return "The current type is not supported!";
+                    var4 = "The current type is not supported!";
+                    break;
             }
-        }catch (Exception e){
-            return String.format("Something went wrong,%s",e.getMessage());
-        }finally {
+        } catch (Exception var9) {
+            var4 = String.format("Something went wrong,%s", var9.getMessage());
             return "";
+        } finally {
+            return var4;
         }
     }
 

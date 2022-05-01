@@ -2,6 +2,7 @@ package icu.weboys.fileview.boot.util.conv;
 
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
+import icu.weboys.fileview.boot.impl.IFile;
 import icu.weboys.fileview.boot.util.file.FPUtils;
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.document.DocumentFormat;
@@ -120,15 +121,17 @@ public class ConvertUtils {
         }
         StringBuilder ht = new StringBuilder();
         for (String s : imgs) {
-            ht.append("<img src='").append(s).append("'/><br>");
+            ht.append("<div class='vimg'><img src='").append(s).append("'/></div>");
         }
         return ht.toString();
     }
 
-    public static File wordToPdf(File file) throws IOException {
-        File out =  FPUtils.getTempFile("pdf");
-        // 获取转换后的文件名
-        ConvertUtils.conver(file,out);
+    public static File wordToPdf(IFile file) throws IOException {
+        File out = new File(file.getMdTypePath("pdf"));
+        // 如果存档路径下未找到文件，则进行转换，否则直接返回存在的文件
+        if(!out.exists()){
+            ConvertUtils.conver(file.getFile(),out);
+        }
         return out;
     }
 

@@ -6,7 +6,7 @@
 
     <groupId>icu.weboys</groupId>
     <artifactId>fileview-springboot</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.5</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -50,6 +50,12 @@
             <artifactId>com-sun-pdfview</artifactId>
             <version>1.0.5-201003191900</version>
             <type>nbm</type>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.15</version>
         </dependency>
 
     </dependencies>

@@ -2,6 +2,7 @@ package icu.weboys.fileview.boot.op;
 
 import icu.weboys.fileview.boot.abs.AbsView;
 import icu.weboys.fileview.boot.abs.AbsViewFile;
+import icu.weboys.fileview.boot.ano.ViewImpl;
 import icu.weboys.fileview.boot.impl.IFile;
 
 import javax.servlet.http.HttpServletResponse;
