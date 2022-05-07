@@ -8,6 +8,6 @@ import java.lang.annotation.Target;
 // 在项目中自定义预览解析
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ViewImpl {
+public @interface ViewProcessor {
     String subfix();
 }

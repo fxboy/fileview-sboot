@@ -31,4 +31,9 @@ public class OpenOfficeUtils {
             System.out.println("FILEVIEW::OpenOffice is not stopped...,reason:" + ex.getMessage());
         }
     }
+
+
+    public void weboys(){
+        System.out.println("Hellow World");
+    }
 }

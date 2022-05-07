@@ -3,12 +3,16 @@ package icu.weboys.fileview.boot.ctrl;
 import icu.weboys.fileview.boot.emu.TpDefinition;
 import icu.weboys.fileview.boot.util.file.FPUtils;
 import icu.weboys.fileview.boot.util.page.ViewUtils;
+
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 
 @CrossOrigin
@@ -21,7 +25,8 @@ public class OViewCtrl {
     HttpServletResponse response;
     @Resource
     ViewUtils viewUtils;
-    @RequestMapping({"/file/{type}"})
+
+    @RequestMapping({ "/file/{type}" })
     @ResponseBody
     public String open(@PathVariable("type") String type, @RequestParam("file") String path) {
         String var4 = "";
@@ -32,8 +37,13 @@ public class OViewCtrl {
                     this.viewUtils.run(FPUtils.getFileType(path), ViewUtils.open(path), this.response);
                     break;
                 case "view":
-                    this.viewUtils.process(TpDefinition.ENABLE_IMAGE_VIEW_TYPE.containsKey(FPUtils.getFileType(path)) ? "html" : FPUtils.getFileType(path), ViewUtils.view(path), this.response);
-                    break;
+                    String filePath = ViewUtils.view(path);
+                    if (filePath == null) {
+                        throw new RuntimeException("::file not found");
+                    }
+                    //return new File(filePath).getName();
+                    this.viewUtils.process(filePath, response);
+                    //this.viewUtils.process(TpDefinition.ENABLE_IMAGE_VIEW_TYPE.containsKey(FPUtils.getFileType(path)) ? "html" : FPUtils.getFileType(path),, this.response);
                 case "down":
                     ViewUtils.download(path);
                     break;

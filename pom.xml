@@ -6,7 +6,7 @@
 
     <groupId>icu.weboys</groupId>
     <artifactId>fileview-springboot</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -57,6 +57,14 @@
             <artifactId>commons-codec</artifactId>
             <version>1.15</version>
         </dependency>
+
+
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.31</version>
+        </dependency>
+
 
     </dependencies>
 

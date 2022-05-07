@@ -24,4 +24,10 @@ public interface IFile {
     String getMdTypeName(String type);
 
     String getMdTypePath(String type);
+
+    String getTheme();
+
+    Boolean isEnableThemeView();
+
+    String getViewFileName();
 }

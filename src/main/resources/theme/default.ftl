@@ -1,18 +1,15 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>LET[%LET_FILENAME%]</title>
+    <title th:text="${lf.title}"></title>
     <style>
-        body{
-
-        }
-        #view{
+        body {}
+        #view {
 
             text-align: center;
-            padding:80px;
+            padding: 80px;
         }
-
-        .vimg{
+        .vimg {
             margin-bottom: 30px;
             padding-bottom: 30px;
             border-bottom: 1px solid #EEEEEE
@@ -41,4 +38,25 @@
             word-break: break-all;
             line-height: 18px;
             font-weight: 600;
-        }</style></head><body><div id="view"></div><div id="dwn-btn"><span>保存本地</span></div><!-- <div id="gd-btn"><span>关灯</span></div> --></body><script>document.getElementById("dwn-btn").onclick = function(){let pth = LET[%LET_FILEPATH%];}</script></html>
+        }
+    </style>
+</head>
+<body>
+    <div id="view">
+        <#if lf.size == 0>
+            <div class="vimg">
+                当前文件无法进行在线预览,请<a href="lf.download"> 保存本地 </a>后查看
+            </div>
+        </#if>
+        <#if lf.size > 0>
+            <#list lf.views as img>
+                <div class="vimg">
+                    <img src="${img}" />
+                </div>
+            </#list>
+        </#if>
+    </div>
+    <div id="dwn-btn"><span>保存本地</span></div><!-- <div id="gd-btn"><span>关灯</span></div> -->
+</body>
+<script>document.getElementById("dwn-btn").onclick = function () { window.open("${lf.download}") }</script>
+</html>

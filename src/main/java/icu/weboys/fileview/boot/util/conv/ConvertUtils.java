@@ -2,18 +2,29 @@ package icu.weboys.fileview.boot.util.conv;
 
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
+
+import icu.weboys.fileview.boot.emu.TpDefinition;
 import icu.weboys.fileview.boot.impl.IFile;
 import icu.weboys.fileview.boot.util.file.FPUtils;
+
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.document.DocumentFormat;
 import org.jodconverter.local.JodConverter;
 import org.springframework.web.multipart.MultipartFile;
+
+import freemarker.core.ParseException;
+import freemarker.template.Configuration;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.Template;
+import freemarker.template.TemplateNotFoundException;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConvertUtils {
     public static Boolean conver(String sourceFile, String destFile) {
@@ -113,26 +124,51 @@ public class ConvertUtils {
         return bufferedImages;
     }
 
-    public static String pdfToImageBase64(File file) throws IOException {
+    public static String[] pdfToImageBase64(File file) throws IOException {
         BufferedImage[] bss = ConvertUtils.pdfToImage(file);
         String[] imgs = new String[bss.length];
         for (int i = 0; i < bss.length; i++) {
-            imgs[i] = FPUtils.imageEncodeToString(bss[i],"jpg");
+            imgs[i] = FPUtils.imageEncodeToString(bss[i],"jpg").replaceAll("\\r\\n","");
         }
-        StringBuilder ht = new StringBuilder();
-        for (String s : imgs) {
-            ht.append("<div class='vimg'><img src='").append(s).append("'/></div>");
-        }
-        return ht.toString();
+        return imgs;
     }
 
     public static File wordToPdf(IFile file) throws IOException {
         File out = new File(file.getMdTypePath("pdf"));
         // 如果存档路径下未找到文件，则进行转换，否则直接返回存在的文件
-        if(!out.exists()){
-            ConvertUtils.conver(file.getFile(),out);
+        if (!out.exists()) {
+            ConvertUtils.conver(file.getFile(), out);
         }
         return out;
+    }
+    
+
+    public static String getFTLTheme(IFile file, Map<String, Object> data) {
+        Writer out = null;
+        try {
+            Template template = TpDefinition.FTL_CONFIGURATION.getTemplate(file.getTheme());
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put("lf", data);
+            String filename = String.format("%s%s.html", TpDefinition.FILE_STATIC_PATH, file.getViewFileName());
+            if((new File(filename)).exists()){
+                return filename;
+            }
+            out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename)));
+            template.process(map, out);
+            return filename;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            try {
+                if (null != out) {
+                    out.flush();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+       
+        return null;
     }
 
 

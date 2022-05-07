@@ -4,7 +4,11 @@ import icu.weboys.fileview.boot.impl.IView;
 import icu.weboys.fileview.boot.impl.ReturnProcessor;
 
 import javax.swing.text.html.HTML;
+
+import freemarker.template.Configuration;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -137,4 +141,30 @@ public class TpDefinition {
 
 
     public static String HTML_THEME_USE = "";
+
+
+
+    // 文件转入模板视图
+    public final static Configuration FTL_CONFIGURATION = new Configuration();
+
+    public static String FILE_STATIC_PATH = "";
+    
+   static {
+        FTL_CONFIGURATION.setDefaultEncoding("UTF-8");
+        // 定义默认的主题位置文件目录，暂时设置为空
+        try {
+            // 未对linux系统兼容
+            String path = (Thread.currentThread().getContextClassLoader().getResource("").getPath() + "theme/")
+                    .substring(1);
+            FILE_STATIC_PATH = (Thread.currentThread().getContextClassLoader().getResource("").getPath() + "templates/")
+                    .substring(1);
+            if (!new File(FILE_STATIC_PATH).exists())
+                new File(FILE_STATIC_PATH).mkdirs();
+            FTL_CONFIGURATION.setDirectoryForTemplateLoading(new File(path));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
 }

@@ -65,7 +65,7 @@ public class ViewUtils {
         return TpDefinition.HTML_THEME_USE.replace("LET[%LET_IMGS%]",content);
     }
 
-    public void run(String type, InputStream in,HttpServletResponse response){
+    public void run(String type, InputStream in, HttpServletResponse response) {
         OutputStream os = null;
         try {
             //response.setContentType("text/html;charset=utf-8");
@@ -73,7 +73,7 @@ public class ViewUtils {
             //response.setContentType("application/octet-stream");
             //response.setHeader("Content-Disposition", "attachment; filename="  + FPUtils.getRandomName(ope));
             type = getFileType(type);
-            response.setContentType(String.format("%s;%s",type,"charset=utf-8"));
+            response.setContentType(String.format("%s;%s", type, "charset=utf-8"));
             os = response.getOutputStream();
             byte[] b = new byte[1024];
             while (in.read(b) != -1) {
@@ -97,30 +97,98 @@ public class ViewUtils {
             } catch (IOException e2) {
                 e2.printStackTrace();
             }
-        }finally {
+        } finally {
 
         }
     }
 
+
+
+    // HTML专属，确切的说是 view 
+    public void run(InputStream in, HttpServletResponse response) {
+        OutputStream os = null;
+        try {
+            // response.setContentType("text/html;charset=utf-8");
+            response.setCharacterEncoding("UTF-8");
+            // response.setContentType("application/octet-stream");
+            // response.setHeader("Content-Disposition", "attachment; filename=" +
+            // FPUtils.getRandomName(ope));
+            String type = getFileType("html");
+            response.setContentType(String.format("%s;%s", type, "charset=utf-8"));
+            os = response.getOutputStream();
+            byte[] b = new byte[1];
+            while (in.read(b) != -1) {
+                os.write(b);
+            }
+            in.close();
+            os.flush();
+            os.close();
+        } catch (Exception e) {
+            try {
+                if (null != in) {
+                    in.close();
+                }
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            try {
+                if (null != os) {
+                    os.close();
+                }
+            } catch (IOException e2) {
+                e2.printStackTrace();
+            }
+        } finally {
+
+        }
+    }
+    
 
 
     // 处理器
-    public void process(String type,String content,HttpServletResponse response){
-        if(TpDefinition.RETURN_PROCESSOR != null){
-            run(type,new ByteArrayInputStream(TpDefinition.RETURN_PROCESSOR.process(type,content,response).getBytes(StandardCharsets.UTF_8)),response);
+    public void process(String type, String content, HttpServletResponse response) {
+        if (TpDefinition.RETURN_PROCESSOR != null) {
+            run(type, new ByteArrayInputStream(
+                    TpDefinition.RETURN_PROCESSOR.process(type, content, response).getBytes(StandardCharsets.UTF_8)),
+                    response);
             return;
         }
-        run(type,new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)),response);
+        run(type, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), response);
+    }
+
+
+    // 预览模式调用的这个方法
+    public void process(String filepath, HttpServletResponse response) {
+        try{
+            // if (TpDefinition.RETURN_PROCESSOR != null) {
+            //     run(new FileInputStream(new File(TpDefinition.RETURN_PROCESSOR.process(null,filepath,response))),
+            //         response);
+            //     return;
+            // }
+            run(new FileInputStream(new File(filepath)), response);
+        } catch (Exception ex) {
+        ex.printStackTrace();
+        }
+    }
+    
+    public void process(String type, String content, String theme ,HttpServletResponse response) {
+        if (TpDefinition.RETURN_PROCESSOR != null) {
+            run(type, new ByteArrayInputStream(
+                    TpDefinition.RETURN_PROCESSOR.process(type, content, response).getBytes(StandardCharsets.UTF_8)),
+                    response);
+            return;
+        }
+        run(type, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), response);
     }
 
     public void run(String type, byte[] b, HttpServletResponse response){
-        OutputStream os = null;
+       PrintWriter os = null;
         try {
             response.setCharacterEncoding("UTF-8");
             type = getFileType(type);
             response.setContentType(String.format("%s;%s",type,"charset=utf-8"));
-            os = response.getOutputStream();
-            os.write(b);
+            os = response.getWriter();
+            os.print(b);
             os.flush();
             os.close();
         } catch (Exception e) {
@@ -128,7 +196,7 @@ public class ViewUtils {
                 if (null != os) {
                     os.close();
                 }
-            } catch (IOException e2) {
+            } catch (Exception e2) {
                 e2.printStackTrace();
             }
         }finally {
