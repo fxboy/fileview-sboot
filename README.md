@@ -1,8 +1,10 @@
-# FILEVIEW-SPRINGBOOT
+# FILEVIEW-SPRINGBOOT(WEBOYS-FILEVIEW)
 
 做一款即插即用的文件在线预览及下载工具
+
 现已支持 pdf，doc，docx，text
-后期将会支持文件夹、文件、图片、视频、音频、压缩包、PDF、WORD、EXCEL、PPT、TXT、HTML、Markdown等格式。
+
+> 后期将会支持文件夹、文件、图片、视频、音频、压缩包、PDF、WORD、EXCEL、PPT、TXT、HTML、Markdown等格式。
 
 ### 配置文件
 ```yml
@@ -30,7 +32,8 @@ public class Application {
 ```
 
 ### 更新日志
-[2022.05.01] 1.0.5
+[2022.05.01] weboys-fileview 1.0.5
+
 1.pdf/doc/docx图片方式预览加入主题（暂时固定，后期可配置与自定义）
 
 2.加入返回内容处理器，在返回页面前，可对内容进行自定义操作（暂时固定，后期自定义）
@@ -50,10 +53,9 @@ public class Application {
 ### 支持
 1. 预览word，ppt，excel等不同预览类型的office文件，基于OpenOffice
 2. 转换依赖： jodconverter-local，com-sun-pdfview
-3. MD5文件校验基于 Apache Commons Codec
+3. MD5文件校验功能核心 基于 Apache Commons Codec
 
 ### 声明
 **代码中可能含有Github Copilot生成的代码，如果您认为该代码违反了您的版权，请告知我们，我们将在第一时间删除。**
 
 联系方式：fanxingitn@outlook.com
-
