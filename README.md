@@ -15,21 +15,12 @@ fileview:
     port: 8100
   root:
     dir: D:\\filewiewtest\\
-    enableImgTps: pdf,doc,docx
+    enableImgTps: pdf|default,doc,docx
 ```
+### 预览模板
+> 预览模板使用了 freemarker 模板引擎，在dir配置的文件夹下的theme文件夹，必须放置 default.ftl (后缀必须为ftl,虽然可以换成其他后缀，为了感谢与突出使用的模板引擎，所以代码内写死了ftl)
 
-### 使用
-> @EnableFileView
-```java
-@SpringBootApplication
-@EnableOnlineView
-public class Application {
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
-
-}
-```
+resource/theme下有个简单的default.ftl，在运行项目后，需手动复制到 theme文件夹下，或重新编写一个，但是必须要有一个名为 default.ftl
 
 ### 更新日志
 [2022.05.01] weboys-fileview 1.0.5
@@ -44,6 +35,14 @@ public class Application {
 
 5.修复配置文件未配置，启动报错
 
+[2022.05.08] weboys-fileview 1.0.6
+
+1.支持 一些文本类型的文件预览，例如：txt,java,sql......
+
+2.新增预览模式主题，当前仅支持 pdf,doc,docx
+
+3.修复亿点点的BUG
+
 
 ### 即将加入
 1. 自定义格式预览实现类，优先级高于依赖中的预览显示类
@@ -54,7 +53,7 @@ public class Application {
 1. 预览word，ppt，excel等不同预览类型的office文件，基于OpenOffice
 2. 转换依赖： jodconverter-local，com-sun-pdfview
 3. MD5文件校验功能核心 基于 Apache Commons Codec
-
+4. 主题模板引擎 基于 freemarker
 ### 声明
 **代码中可能含有Github Copilot生成的代码，如果您认为该代码违反了您的版权，请告知我们，我们将在第一时间删除。**
 

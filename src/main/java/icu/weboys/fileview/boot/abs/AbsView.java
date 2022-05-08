@@ -14,18 +14,13 @@ public class AbsView implements IView {
     }
 
     @Override
-    public String view(IFile file) throws IOException {
-        byte[] bytes = new byte[1024];
-        FileInputStream inputStream = file.getInputStream();
-        inputStream.available();
-        if(inputStream.available() != -1){
-            inputStream.read(bytes);
-        }
-        return new String(bytes, "UTF-8");
+    public IFile view(IFile file) throws IOException {
+        file.setEndFilePath(file.getFilePath());
+        return file;
     }
 
     @Override
-    public String download(IFile file) {
-        return null;
+    public IFile download(IFile file) {
+        return file;
     }
 }

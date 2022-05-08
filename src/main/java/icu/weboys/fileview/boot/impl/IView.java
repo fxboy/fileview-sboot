@@ -9,7 +9,6 @@ import java.io.IOException;
 
 public interface IView {
     FileInputStream open(IFile file) throws IOException;
-    String view(IFile file) throws IOException;
-
-    String download(IFile file);
+    IFile view(IFile file) throws IOException;
+    IFile download(IFile file);
 }

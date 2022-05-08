@@ -19,7 +19,7 @@ public abstract class AbsViewFile implements IFile {
     private Boolean isStream;
     private Boolean enable = true;
     private String outFileName;
-
+    private String openPath;
     // 使用的主题
     private String theme;
     // 是否开启模板预览模式
@@ -170,4 +170,15 @@ public abstract class AbsViewFile implements IFile {
     public Boolean isEnableThemeView() {
         return this.enableView;
     }
+
+    @Override
+    public void setEndFilePath(String filepath) {
+        this.openPath = filepath;
+    }
+
+    @Override
+    public String getEndFilePath() {
+        return this.openPath;
+    }
+
 }

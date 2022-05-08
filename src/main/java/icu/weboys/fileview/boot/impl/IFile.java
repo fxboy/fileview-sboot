@@ -30,4 +30,8 @@ public interface IFile {
     Boolean isEnableThemeView();
 
     String getViewFileName();
+
+    void setEndFilePath(String filepath);
+
+    String getEndFilePath();
 }

@@ -9,6 +9,7 @@ import icu.weboys.fileview.boot.util.page.ViewUtils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 public class DocViewImpl extends AbsView {
@@ -20,26 +21,27 @@ public class DocViewImpl extends AbsView {
     }
 
     @Override
-    public String view(IFile file) throws IOException {
+    public IFile view(IFile file) throws IOException {
         if (!file.isEnableThemeView()) {
             // 开启图片转换
             return null;
         }
         String[] imgs = ConvertUtils.pdfToImageBase64(ConvertUtils.wordToPdf(file));
-        return ConvertUtils.getFTLTheme(file, new HashMap<String, Object>() {
+        file.setEndFilePath(ConvertUtils.getFTLTheme(file, new HashMap<String, Object>() {
             {
                 put("views", imgs);
                 put("title", file.getFileName() + "- 在线预览");
                 put("size", imgs.length);
-                put("download", file.getFilePath());
+                put("download", URLEncoder.encode(file.getFilePath(), "UTF-8"));
             }
-        });
+        }));
+        return file;
         //return ViewUtils.cvHtml(ConvertUtils.pdfToImageBase64(ConvertUtils.wordToPdf(file)));
     }
 
     @Override
-    public String download(IFile file) {
-        return null;
+    public IFile download(IFile file) {
+        return super.download(file);
     }
 }
 

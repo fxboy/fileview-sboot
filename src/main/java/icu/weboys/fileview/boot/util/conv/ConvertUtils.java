@@ -21,8 +21,11 @@ import freemarker.template.TemplateNotFoundException;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -170,7 +173,5 @@ public class ConvertUtils {
        
         return null;
     }
-
-
 
 }
